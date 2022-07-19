@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="./pagination.js"></script>
+    <link rel="stylesheet" href="./pagination.css">
+</head>
+
+<body>
+    <div id="data-container"></div>
+    <div id="pagination-container"></div>
+
+    <script>
+        function updateName(element) {
+            originalData = originalData.map((e, i) => {
+                if (i === $(element).data('index')) return { ...e, name: element.value }
+                return e;
+            })
+        }
+
+        function paging(page, pagesize) {
+            return originalData.slice((page - 1) * pagesize, page * pagesize);
+        }
+
+        function template(data) {
+            var html = '<div>';
+            $.each(data, function (index, item) {
+                html += `
+                    <div>
+                        <input data-index="${item.id}" type="text" value="${item.name}" onchange="updateName(this)" />
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        var originalData = new Array(30).fill(1).map((e, i) => ({
+            id: i,
+            name: "Person " + i
+        }))
+
+        var dataContainer = $('#data-container');
+
+        dataContainer.html(template(paging(1, 10)));
+
+        $('#pagination-container').pagination({
+            items: 30,
+            itemsOnPage: 10,
+            cssStyle: 'light-theme',
+            onPageClick: function (page, event) {
+                console.log(page);
+                dataContainer.html(template(paging(page, 10)));
+            }
+        });
+    </script>
+</body>
+
+</html>
